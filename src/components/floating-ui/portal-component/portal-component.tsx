@@ -2,6 +2,7 @@ import { Component, Element, h, Prop, Watch } from '@stencil/core';
 import {
   autoUpdate,
   computePosition,
+  Placement,
 } from '@floating-ui/dom';
 
 @Component({
@@ -175,10 +176,9 @@ export class PortalComponent {
   private createPopper() {
       this.cleanup = autoUpdate(this.anchor || this.host, this.container, () => {
         computePosition(this.anchor || this.host, this.container, {
-          placement: 'bottom',
+          placement: this.getPlacement(this.openDirection),
           strategy: this.position,
         }).then(({x, y}) => {
-          console.log({x, y})
           Object.assign(this.container.style, {
             left: `${x}px`,
             top: `${y}px`,
@@ -186,6 +186,25 @@ export class PortalComponent {
         });
       });
   }
+
+  private getPlacement(direction: string): Placement {
+    const placements: Record<string, Placement> = {
+        'left-start': 'left-start',
+        left: 'left',
+        'left-end': 'left-end',
+        'right-start': 'right-start',
+        right: 'right',
+        'right-end': 'right-end',
+        'top-start': 'top-start',
+        top: 'top',
+        'top-end': 'top-end',
+        'bottom-start': 'bottom-start',
+        bottom: 'bottom',
+        'bottom-end': 'bottom-end',
+    };
+
+    return placements[direction];
+}
 
   private destroyPopper() {
       this.cleanup();
