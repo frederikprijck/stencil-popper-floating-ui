@@ -1,0 +1,63 @@
+
+
+:host(my-popover-surface-floating) {
+    isolation: isolate;
+
+    position: relative;
+    display: flex;
+
+    width: var(--popover-surface-width, auto);
+    max-height: inherit; // inherits it from the dynamically calculated `max-height` of `my-portal--container`
+    max-width: calc(100vw - 2rem);
+    margin: 0 0.25rem;
+}
+
+.my-popover-surface {
+    flex: 1;
+    border-radius: var(--popover-border-radius, functions.pxToRem(12));
+    box-shadow: var(--shadow-depth-16);
+
+    backdrop-filter: blur(functions.pxToRem(5));
+    -webkit-backdrop-filter: blur(functions.pxToRem(5));
+
+
+    &:after {
+        // allows using `--popover-body-background-color` while
+        // getting the blurred backdrop effect
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+
+        opacity: 0.75;
+
+        border-radius: var(--popover-border-radius, functions.pxToRem(12));
+        background-color: var(
+            --popover-body-background-color,
+            var(--lime-elevated-surface-background-color)
+        );
+    }
+
+    &:focus,
+    &:focus-within {
+        &:after {
+            opacity: 1;
+        }
+    }
+
+    & > * {
+        // this fixes some unwanted layout issues
+        // which might be very hard for consumers to realize
+        // and fix by themselves. Without this code,
+        // if the consumer sets for example paddings in
+        // what they send to the popover, their element
+        // can grow larger than the popover surface
+        box-sizing: border-box;
+    }
+}
